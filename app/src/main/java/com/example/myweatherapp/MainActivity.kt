@@ -64,7 +64,7 @@ class MainActivity : ComponentActivity() {
                                 WeatherDetailScreen(
                                     weatherData = weatherData,
                                     itemIndex = index.arguments?.getInt("index")
-                                        ?: 0 // passing the index
+                                        ?: 0 // passing the index allow null
                                 )
                             }
                         }
