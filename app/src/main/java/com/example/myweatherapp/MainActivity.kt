@@ -30,20 +30,19 @@ class MainActivity : ComponentActivity() {
         setContent {
             MyWeatherAppTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Surface(
+                    Surface(//Let Surface take care of the innerPadding in Scaffold, place the WeatherSearchScreen in the correct place, and use theme colours, etc.
                         modifier = Modifier
                             .fillMaxSize()
                             .padding(innerPadding),
                         color = MaterialTheme.colorScheme.background
                     ) {
                         val navController: NavHostController = rememberNavController()
-
-                        // dummy weather data
+                        //dummy weather data
                         val weatherData = listOf(
                             "Today - Storm 8 / 12",
                             "Tomorrow - Foggy 9 / 13",
                             "Thurs - Rainy 8 / 13",
-                            "Fri - Foggy 8 / 12",
+                            "Fri - foggy 8 / 12",
                             "Sat - Sunny 9 / 14",
                             "Sun - Sunny 10 / 15",
                             "Mon - Sunny 11 / 15"
@@ -51,25 +50,27 @@ class MainActivity : ComponentActivity() {
                         NavHost(
                             navController = navController, startDestination = AppScreens.Search.name
                         ) {
-                            // call the composable() function once for each of the routes
-                            composable(route = AppScreens.Search.name) { // Search
-                                // TODO: Call the WeatherSearchScreen composable function
+                            //call the composable() function once for each of the routes
+                            composable(route = AppScreens.Search.name) {//Search
+                                //To do: call the WeatherSearchScreen composable function
                                 WeatherSearchScreen(weatherData, navController)
                             }
                             composable(
-                                route = AppScreens.Detail.name + "/{index}", // Detail
+                                route = AppScreens.Detail.name + "/{index}",//Detail
                                 arguments = listOf(
                                     navArgument(name = "index") {
-                                        type = NavType.IntType // extract argument
+                                        type = NavType.IntType //extract the argument
                                     })
-                            ) { index -> // call the weather search screen composable function
+                            ) { index ->//call the WeatherSearchScreen composable function
                                 WeatherDetailScreen(
-                                    weatherData = weatherData,
+                                    weatherData,
                                     itemIndex = index.arguments?.getInt("index")
-                                        ?: 0 // passing the index allow null
+                                        ?: 0//passing the index
                                 )
                             }
+
                         }
+
                     }
                 }
             }
@@ -97,5 +98,6 @@ enum class AppScreens {
     Search, //reference it everywhere else using AppScreens.Search.name
     Detail //reference it everywhere else using AppScreens.Detail.name
 }
+
 
 
