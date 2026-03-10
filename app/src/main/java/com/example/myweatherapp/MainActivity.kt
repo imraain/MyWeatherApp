@@ -1,7 +1,9 @@
 package com.example.myweatherapp
 
+import android.content.BroadcastReceiver
+import android.content.Intent
+import android.content.IntentFilter
 import android.os.Bundle
-import android.view.Surface
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -11,6 +13,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
+import androidx.core.content.ContextCompat
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -20,6 +23,7 @@ import androidx.navigation.navArgument
 import com.example.myweatherapp.ui.theme.MyWeatherAppTheme
 
 class MainActivity : ComponentActivity() {
+    private val br: BroadcastReceiver = MyPowerReceiver()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -45,8 +49,7 @@ class MainActivity : ComponentActivity() {
                             "Mon - Sunny 11 / 15"
                         )
                         NavHost(
-                            navController = navController,
-                            startDestination = AppScreens.Search.name
+                            navController = navController, startDestination = AppScreens.Search.name
                         ) {
                             // call the composable() function once for each of the routes
                             composable(route = AppScreens.Search.name) { // Search
@@ -58,8 +61,7 @@ class MainActivity : ComponentActivity() {
                                 arguments = listOf(
                                     navArgument(name = "index") {
                                         type = NavType.IntType // extract argument
-                                    }
-                                )
+                                    })
                             ) { index -> // call the weather search screen composable function
                                 WeatherDetailScreen(
                                     weatherData = weatherData,
@@ -73,9 +75,25 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+
+    override fun onResume() {
+        super.onResume()
+        //create an instance of IntentFilter
+        val filter = IntentFilter(Intent.ACTION_POWER_CONNECTED)
+        //set the receiver exported flag if your app is listening to system broadcast
+        val receiverFlag = ContextCompat.RECEIVER_EXPORTED
+        //register the receiver in the Activity context
+        ContextCompat.registerReceiver(this, br, filter, receiverFlag)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        //unregister the broadcast receiver to avoid leaking the receiver outside the Activity context
+        unregisterReceiver(br)
+    }
 }
 
-enum class AppScreens{
+enum class AppScreens {
     Search, //reference it everywhere else using AppScreens.Search.name
     Detail //reference it everywhere else using AppScreens.Detail.name
 }
