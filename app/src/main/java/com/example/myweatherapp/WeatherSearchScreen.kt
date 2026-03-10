@@ -1,3 +1,6 @@
+package com.example.myweatherapp
+
+import android.R.attr.data
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.clickable
@@ -6,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -21,23 +25,21 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.example.myweatherapp.R
+import androidx.navigation.NavHostController
 
-fun weatherSearchScreen(
-    weatherData: List<String>,
-    navController: navHostController,
-    modifier: Modifier = Modifier
-) {
-
-}
 
 @Composable
-fun WeatherSearchScreen(modifier: Modifier = Modifier) {
-    var location by rememberSaveable { mutableStateOf("") }
-    val context = LocalContext.current
+fun WeatherSearchScreen(
+    weatherData: List<String>,
+    navController: NavHostController,
+    modifier: Modifier = Modifier
+) {
+    // var text by rememberSavable { mutableStateOf("") }
+    var location by rememberSaveable { mutableStateOf("") } // variable to keep value of TextField
+    val context = LocalContext.current // get the activity context within a composable function
 
     // create a state for the forecast list
-    val forecastList = remember { mutableStateListOf<String>() }
+    var iniData by remember { mutableStateOf(emptyList<String>()) }
 
     Column(
         modifier = Modifier
@@ -46,8 +48,7 @@ fun WeatherSearchScreen(modifier: Modifier = Modifier) {
     ) {
         // Welcome Message
         Text(
-            modifier = Modifier
-                .padding(bottom = 16.dp),
+            modifier = Modifier.padding(bottom = 16.dp),
             text = stringResource(R.string.welcome_msg),
         )
         // Location Text Field
@@ -59,55 +60,51 @@ fun WeatherSearchScreen(modifier: Modifier = Modifier) {
             value = location,
             onValueChange = {
                 location = it
-            }, label = {
+            },
+            label = {
                 Text(stringResource(R.string.location_msg))
             })
         // Refresh button
         Button(
-            modifier = Modifier
-                .align(Alignment.End),
-            onClick = {
+            modifier = Modifier.align(Alignment.End), onClick = {
+
+                iniData = weatherData
+
                 Toast.makeText(
-                    context,
-                    "Refreshing Weather!",
-                    Toast.LENGTH_LONG
+                    context, "Refreshing Weather!", Toast.LENGTH_LONG
                 ).show()
-
-                // clear forecast before refresh
-                forecastList.clear()
-
-                // Forecast list shows after refresh
-                forecastList.addAll(
-                    listOf(
-                        "Today - Storm 8 / 12",
-                        "Tomorrow - Foggy 9 / 13",
-                        "Thurs - Rainy 8 / 13",
-                        "Fri - Foggy 8 / 12",
-                        "Sat - Sunny 9 / 14",
-                        "Sun - Sunny 10 / 15",
-                        "Mon - Sunny 11 / 15"
-                    )
-                )
                 Log.d("WeatherSearchScreen", "button clicked")
-            })
-        {
+            }) {
             Text(stringResource(R.string.refresh))
         }
+        WeatherList(iniData, navController, modifier)
+    }
+}
 
-        // display forecast list using LazyColumns
-        LazyColumn {
-            items(forecastList)
-            {
-                    forecast ->
-                Text(text = forecast,
-                    modifier = modifier.padding(16.dp).clickable(
+@Composable
+fun WeatherList(
+    data: List<String>,
+    navController: NavHostController,
+    modifier: Modifier
+) {
+    // display forecast list using LazyColumns
+    val context = LocalContext.current // get the activity within the composable function
+
+    LazyColumn {
+        items(data) {
+            // iterate through each item in the list
+                item ->
+            Text(
+                text = item, modifier = modifier
+                    .padding(16.dp)
+                    .clickable(
                         onClick = {
-                            Toast.makeText(context, "Item Clicked", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(
+                                context, "Item Clicked!", Toast.LENGTH_LONG
+                            ).show()
                         }
                     )
-                )
-            }
+            )
         }
-
     }
 }
