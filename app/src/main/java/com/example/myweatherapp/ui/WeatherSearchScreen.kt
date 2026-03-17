@@ -1,8 +1,5 @@
 package com.example.myweatherapp.ui
 
-import android.content.Intent
-import android.net.Uri
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -12,7 +9,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -63,49 +59,7 @@ fun WeatherSearchScreen(
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            // View on Map button
-            Button(
-                onClick = {
-                    val location = text
-                    // construct the uri
-                    val geoUri = Uri.parse("geo:0,0?q=$location")
-                    Log.d("uri", location)
-
-                    val intent = Intent(Intent.ACTION_VIEW).apply {
-                        data = geoUri
-                    }
-
-                    //if there is an app that can handle the implicit intent
-                    if (intent.resolveActivity(context.packageManager) != null) {
-                        Log.d("WeatherSearchScreen", "there is an app")
-                        context.startActivity(intent)
-                    } else {
-                        Log.d("WeatherSearchScreen", "no app handling implicit intent")
-                    }
-                }
-            ) {
-                Text("View on Map")
-            }
-
-            // Refresh button
-            Button(
-                onClick = {
-
-                    Toast.makeText(
-                        context,
-                        "Refreshing Weather!",
-                        Toast.LENGTH_LONG
-                    ).show()
-
-                    // fetch weather data
-                    viewModel.fetchForecastForCity(text)
-                    Log.d("WeatherSearchScreen", "Weather Refreshed!")
-                }
-            ) {
-                Text(stringResource(R.string.refresh))
-            }
-        }
+        ) {}
         Text(
             text = "Weather forecast for $text:",
             modifier = modifier.padding(bottom = 16.dp)

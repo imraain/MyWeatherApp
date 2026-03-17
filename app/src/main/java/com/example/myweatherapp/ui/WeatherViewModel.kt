@@ -170,7 +170,7 @@ class WeatherViewModel : ViewModel() {
 
     private fun getReadableDateString(time: Long): String {
         val date = Date(time * 1000)
-        val format = SimpleDateFormat("E, MMM d")
+        val format = SimpleDateFormat("E, MMM d, ha")
         return format.format(date)
     }
 
