@@ -14,12 +14,16 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.myweatherapp.ui.WeatherDetailScreen
+import com.example.myweatherapp.ui.WeatherSearchScreen
+import com.example.myweatherapp.ui.WeatherViewModel
 import com.example.myweatherapp.ui.theme.MyWeatherAppTheme
 
 class MainActivity : ComponentActivity() {
@@ -37,23 +41,16 @@ class MainActivity : ComponentActivity() {
                         color = MaterialTheme.colorScheme.background
                     ) {
                         val navController: NavHostController = rememberNavController()
-                        //dummy weather data
-                        val weatherData = listOf(
-                            "Today - Storm 8 / 12",
-                            "Tomorrow - Foggy 9 / 13",
-                            "Thurs - Rainy 8 / 13",
-                            "Fri - foggy 8 / 12",
-                            "Sat - Sunny 9 / 14",
-                            "Sun - Sunny 10 / 15",
-                            "Mon - Sunny 11 / 15"
-                        )
+
+                        val viewModel: WeatherViewModel = viewModel()
                         NavHost(
-                            navController = navController, startDestination = AppScreens.Search.name
+                            navController = navController,
+                            startDestination = AppScreens.Search.name
                         ) {
                             //call the composable() function once for each of the routes
                             composable(route = AppScreens.Search.name) {//Search
                                 //To do: call the WeatherSearchScreen composable function
-                                WeatherSearchScreen(weatherData, navController)
+                                WeatherSearchScreen(viewModel, navController)
                             }
                             composable(
                                 route = AppScreens.Detail.name + "/{index}",//Detail
@@ -63,7 +60,7 @@ class MainActivity : ComponentActivity() {
                                     })
                             ) { index ->//call the WeatherSearchScreen composable function
                                 WeatherDetailScreen(
-                                    weatherData,
+                                    viewModel,
                                     itemIndex = index.arguments?.getInt("index")
                                         ?: 0//passing the index
                                 )

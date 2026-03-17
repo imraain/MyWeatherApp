@@ -1,4 +1,4 @@
-package com.example.myweatherapp
+package com.example.myweatherapp.ui
 
 import android.content.Intent
 import android.net.Uri
@@ -16,9 +16,9 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -26,17 +26,19 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.example.myweatherapp.R
 
 
 @Composable
 fun WeatherSearchScreen(
-    weatherData: List<String>,
+    viewModel: WeatherViewModel,
     navController: NavHostController,
     modifier: Modifier = Modifier
 ) {
     var text by rememberSaveable { mutableStateOf("") }
     val context = LocalContext.current
-    var iniData by remember { mutableStateOf(emptyList<String>()) }
+
+    val weatherData by viewModel.weatherData.collectAsState()
 
     Column(
         modifier = Modifier
@@ -89,7 +91,6 @@ fun WeatherSearchScreen(
             // Refresh button
             Button(
                 onClick = {
-                    iniData = weatherData
 
                     Toast.makeText(
                         context,
@@ -97,13 +98,19 @@ fun WeatherSearchScreen(
                         Toast.LENGTH_LONG
                     ).show()
 
+                    // fetch weather data
+                    viewModel.fetchForecastForCity(text)
                     Log.d("WeatherSearchScreen", "Weather Refreshed!")
                 }
             ) {
                 Text(stringResource(R.string.refresh))
             }
         }
-        WeatherList(iniData, navController, modifier)
+        Text(
+            text = "Weather forecast for $text:",
+            modifier = modifier.padding(bottom = 16.dp)
+        )
+        WeatherList(weatherData, navController, modifier)
     }
 }
 
